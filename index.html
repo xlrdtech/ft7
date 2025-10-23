@@ -970,8 +970,8 @@
                     <div class="header__title">FultonTech7</div>
                 </div>
                 <!-- Original Nav moved/replaced by tabs -->
-             <div class="header__nav">
-                     <a href="https://calendly.com/fultontech7/30min?month=2025-10" class="nav-link tab-switcher ai-style-change-1" data-target-tab="book-now">Book Appointment</a>
+                <div class="header__nav"> <!-- Keep this div for structure if needed, or adjust spacing -->
+                     <a href="#" class="nav-link tab-switcher" data-target-tab="book">Book Appointment</a> <!-- Example: Button to switch to Book tab -->
                 </div>
             </div>
         </div>
@@ -1023,17 +1023,17 @@
 
                     <div class="services-grid">
                         <!-- Use tab-switcher class -->
-                        <div class="service-card clickable-service-card tab-switcher" data-target-tab="book-now" data-service="basic">
+                        <div class="service-card clickable-service-card tab-switcher" data-target-tab="book" data-service="basic">
                             <div class="service-price">$250</div>
                             <h3 class="service-name">Basic Tune-Up</h3>
                             <p class="service-description">Spark plugs, air filter, basic inspection</p>
                         </div>
-                        <div class="service-card clickable-service-card tab-switcher" data-target-tab="book-now" data-service="comprehensive">
+                        <div class="service-card clickable-service-card tab-switcher" data-target-tab="book" data-service="comprehensive">
                             <div class="service-price">$350</div>
                             <h3 class="service-name">Comprehensive Tune-Up</h3>
                             <p class="service-description">Full service including filters, fluids, diagnostics</p>
                         </div>
-                        <div class="service-card clickable-service-card tab-switcher" data-target-tab="book-now" data-service="premium">
+                        <div class="service-card clickable-service-card tab-switcher" data-target-tab="book" data-service="premium">
                             <div class="service-price">$450</div>
                             <h3 class="service-name">Premium Tune-Up</h3>
                             <p class="service-description">Complete service with additional maintenance items</p>
@@ -1052,10 +1052,10 @@
 
                     <div class="areas-grid">
                          <!-- Use tab-switcher class -->
-                        <div class="area-badge clickable-area-badge tab-switcher" data-target-tab="book-now" data-area="South Fulton">South Fulton</div>
-                        <div class="area-badge clickable-area-badge tab-switcher" data-target-tab="book-now" data-area="Union City">Union City</div>
-                        <div class="area-badge clickable-area-badge tab-switcher" data-target-tab="book-now" data-area="Fairburn">Fairburn</div>
-                        <div class="area-badge clickable-area-badge tab-switcher" data-target-tab="book-now" data-area="Palmetto">Palmetto</div>
+                        <div class="area-badge clickable-area-badge tab-switcher" data-target-tab="book" data-area="South Fulton">South Fulton</div>
+                        <div class="area-badge clickable-area-badge tab-switcher" data-target-tab="book" data-area="Union City">Union City</div>
+                        <div class="area-badge clickable-area-badge tab-switcher" data-target-tab="book" data-area="Fairburn">Fairburn</div>
+                        <div class="area-badge clickable-area-badge tab-switcher" data-target-tab="book" data-area="Palmetto">Palmetto</div>
                     </div>
                 </div>
             </section>
@@ -1135,7 +1135,7 @@
                          <div class="form-group">
                              <div id="aiDiagnosisAnswer" style="display: none;"></div>
                              <!-- Use tab-switcher class -->
-                             <button type="button" id="bookDiagnosisBtn" class="btn btn--secondary btn--full-width tab-switcher" data-target-tab="book-now">Book a Diagnostic Service</button>
+                             <button type="button" id="bookDiagnosisBtn" class="btn btn--secondary btn--full-width tab-switcher" data-target-tab="book">Book a Diagnostic Service</button>
                          </div>
                      </div>
                 </div>
@@ -1403,61 +1403,60 @@
             tabSwitchers.forEach(switcher => {
                 switcher.addEventListener('click', (e) => {
                     e.preventDefault(); // Prevent default link behavior
-                    const targetTabId = switcher.dataset.targetTab + '-pane'; // e.g., 'book-now-pane'
+                    // Correctly derive target pane ID from data-target-tab
+                    const targetTabShortName = switcher.dataset.targetTab; // e.g., "book"
+                    const targetTabId = targetTabShortName ? targetTabShortName + '-pane' : null; // e.g., "book-pane"
 
-                    // Find the button corresponding to the target tab and simulate a click
-                    const targetButton = document.querySelector(`.tab-button[data-target="${targetTabId}"]`);
-                    if (targetButton) {
-                         targetButton.click(); // This will trigger switchTab
-
-                         // --- Handle specific actions after tab switch ---
-                         const service = switcher.dataset.service;
-                         const area = switcher.dataset.area;
-
-                         // Use setTimeout to allow tab switch animation/rendering
-                         setTimeout(() => {
-                             if (service) { // If it's a service card click
-                                 const radio = document.getElementById(service);
-                                 if (radio) radio.checked = true;
-                                 const serviceOptions = document.querySelector('#book-pane .service-options');
-                                 if (serviceOptions) serviceOptions.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                             } else if (area) { // If it's an area badge click
-                                 const addressField = document.getElementById('serviceAddress');
-                                 if (addressField) {
-                                     addressField.value = area + ", GA";
-                                     addressField.focus();
-                                      addressField.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                                 }
-                             } else if (switcher.id === 'bookDiagnosisBtn') { // If it's the Book Diagnosis button
-                                 const radio = document.getElementById('comprehensive');
-                                 const issueDescriptionField = document.getElementById('issueDescription');
-                                 const symptomsInput = document.getElementById('symptomsInput');
-                                 const vehicleInfoInput = document.getElementById('vehicleInfoInput');
-
-                                 if (radio) radio.checked = true;
-                                 if(issueDescriptionField && symptomsInput && symptomsInput.value) {
-                                     // Append diagnosis info only if issueDescription is empty or already contains diagnosis info
-                                     const diagPrefix = "From AI Diagnoser:";
-                                     if (!issueDescriptionField.value || issueDescriptionField.value.startsWith(diagPrefix)) {
-                                         issueDescriptionField.value = `${diagPrefix}\nVehicle: ${vehicleInfoInput?.value || 'Not specified'}\nSymptoms: ${symptomsInput.value}`;
-                                     } // else, user might have typed something else, don't overwrite
-                                     issueDescriptionField.focus();
-                                      issueDescriptionField.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                                 } else if (issueDescriptionField) {
-                                      // Scroll anyway if the field exists
-                                      issueDescriptionField.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                                 }
-                             } else {
-                                // Default scroll to top or specific element if needed for other switchers
-                                const formContainer = document.querySelector('#book-pane .form-container');
-                                if (formContainer && targetTabId === 'book-pane') { // Only scroll to form if going to Book tab
-                                     formContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                                }
-                             }
-                         }, 50); // Small delay
-                    } else {
-                        console.warn('Target tab button not found for switcher:', switcher);
+                    if (!targetTabId) {
+                        console.warn('Tab switcher missing data-target-tab:', switcher);
+                        return;
                     }
+
+                    // Direct call to switchTab is more robust
+                    switchTab(targetTabId);
+
+                    // --- Handle specific actions after tab switch ---
+                    const service = switcher.dataset.service;
+                    const area = switcher.dataset.area;
+
+                    // Use setTimeout to allow tab switch animation/rendering
+                    setTimeout(() => {
+                        if (service) { // If it's a service card click
+                            const radio = document.getElementById(service);
+                            if (radio) radio.checked = true;
+                            const serviceOptions = document.querySelector('#book-pane .service-options');
+                            if (serviceOptions) serviceOptions.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        } else if (area) { // If it's an area badge click
+                            const addressField = document.getElementById('serviceAddress');
+                            if (addressField) {
+                                addressField.value = area + ", GA";
+                                addressField.focus();
+                                addressField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            }
+                        } else if (switcher.id === 'bookDiagnosisBtn') { // If it's the Book Diagnosis button
+                            const radio = document.getElementById('comprehensive');
+                            const issueDescriptionField = document.getElementById('issueDescription');
+                            const symptomsInput = document.getElementById('symptomsInput');
+                            const vehicleInfoInput = document.getElementById('vehicleInfoInput');
+
+                            if (radio) radio.checked = true;
+                            if(issueDescriptionField && symptomsInput && symptomsInput.value) {
+                                const diagPrefix = "From AI Diagnoser:";
+                                if (!issueDescriptionField.value || issueDescriptionField.value.startsWith(diagPrefix)) {
+                                    issueDescriptionField.value = `${diagPrefix}\nVehicle: ${vehicleInfoInput?.value || 'Not specified'}\nSymptoms: ${symptomsInput.value}`;
+                                }
+                                issueDescriptionField.focus();
+                                issueDescriptionField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            } else if (issueDescriptionField) {
+                                issueDescriptionField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            }
+                        } else if (targetTabId === 'book-pane') { // If just switching to book tab (e.g., header link)
+                           const formContainer = document.querySelector('#book-pane .form-container');
+                           if (formContainer) {
+                                formContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                           }
+                        }
+                    }, 50); // Small delay
                 });
             });
 
